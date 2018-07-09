@@ -17,11 +17,11 @@ package com.example.hyperpc.asdf;
 public class Function {
 
     private static final String OPEN_WEATHER_MAP_URL =
-            "http://api.openweathermap.org/data/2.5/weather?q=Moscow&APPID=7f5c770cfd68c4e2ead059853378b893&lat=%s&lon=%s&units=metric";
+            "http://api.openweathermap.org/data/2.5/weather?q=Moscow&APPID=7f5c770cfd68c4e2ead059853378b893&lat=%s&lon=%s&units=metric"; // url сайта с погодой
 
-    private static final String OPEN_WEATHER_MAP_API = "7f5c770cfd68c4e2ead059853378b893";
+    private static final String OPEN_WEATHER_MAP_API = "7f5c770cfd68c4e2ead059853378b893"; // мой api ключ
 
-    public static String setWeatherIcon(int actualId, long sunrise, long sunset){
+    public static String setWeatherIcon(int actualId, long sunrise, long sunset){ // класс который возвращает иконку(её код)
         int id = actualId / 100;
         String icon = "";
         if(actualId == 800){
@@ -52,7 +52,7 @@ public class Function {
 
 
 
-    public interface AsyncResponse {
+    public interface AsyncResponse { // async exec ответ
 
         void processFinish(String output1, String output2, String output3, String output4, String output5, String output6, String output7, String output8);
     }
@@ -63,14 +63,14 @@ public class Function {
 
     public static class placeIdTask extends AsyncTask<String, Void, JSONObject> {
 
-        public AsyncResponse delegate = null;//Call back interface
+        public AsyncResponse delegate = null;//Call back interface - обратный вызов
 
         public placeIdTask(AsyncResponse asyncResponse) {
             delegate = asyncResponse;//Assigning call back interfacethrough constructor
         }
 
         @Override
-        protected JSONObject doInBackground(String... params) {
+        protected JSONObject doInBackground(String... params) { // обработка ошибки если она есть в json
 
             JSONObject jsonWeather = null;
             try {
@@ -84,13 +84,14 @@ public class Function {
         }
 
         @Override
-        protected void onPostExecute(JSONObject json) {
+        protected void onPostExecute(JSONObject json) { // после asynctask exec
             try {
                 if(json != null){
                     JSONObject details = json.getJSONArray("weather").getJSONObject(0);
                     JSONObject main = json.getJSONObject("main");
                     DateFormat df = DateFormat.getDateTimeInstance();
 
+                    // присвоение переменным значения из jsonа
 
                     String city = json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country");
                     String description = details.getString("description").toUpperCase(Locale.US);
@@ -103,6 +104,7 @@ public class Function {
                             json.getJSONObject("sys").getLong("sunset") * 1000);
 
                     delegate.processFinish(city, description, temperature, humidity, pressure, updatedOn, iconText, ""+ (json.getJSONObject("sys").getLong("sunrise") * 1000));
+                    // возврат этих значений
 
                 }
             } catch (JSONException e) {
@@ -119,7 +121,7 @@ public class Function {
 
 
 
-    public static JSONObject getWeatherJSON(String lat, String lon){
+    public static JSONObject getWeatherJSON(String lat, String lon){ // получение jsona
         try {
             URL url = new URL(String.format(OPEN_WEATHER_MAP_URL, lat, lon));
             HttpURLConnection connection =
@@ -137,6 +139,8 @@ public class Function {
             reader.close();
 
             JSONObject data = new JSONObject(json.toString());
+
+            // считывание и присвоения jsona
 
             // This value will be 404 if the request was not
             // successful
